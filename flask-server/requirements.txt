@@ -1,4 +1,4 @@
 tensorflow
 numpy
 pytype
-flask
+flask>=2.2.2

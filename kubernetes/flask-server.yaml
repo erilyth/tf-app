@@ -17,12 +17,13 @@ spec:
       containers:
       - name: flask-server-container
         image: gcr.io/eoscience/flask-server:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
       # Add the secret created to the default service account as well: https://blog.container-solutions.com/using-google-container-registry-with-kubernetes
       # If this is not done, then fetching images from GCR will fail!
       imagePullSecrets:
-      - name: eoscience-gcr-key
+      - name: gcr-key
 ---
 apiVersion: v1
 kind: Service

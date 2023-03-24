@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# Read commit messages stream and if we are pushing to a branch other than
+# "main", don't do anything special.
+while read local_ref local_oid remote_ref remote_oid
+do
+	if echo $remote_ref | grep 'main$' > /dev/null; then
+		:
+	else
+		exit 0
+	fi 
+done
+
+# If we are pushing to the "main" branch, prompt the user if they want to
+# deploy the changes.
+
+# Allow for user input.
+exec < /dev/tty
+
+read -p "Do you want to update the docker image and push it to GCR? (Y/n) " RESP
+if echo $RESP | grep -E '^[Yy]$' > /dev/null; then
+	echo
+	bash $(git rev-parse --show-toplevel)/automation/build_and_upload_docker_images.sh
+fi
+
+read -p "Do you want to deploy the changes to kubernetes? (Y/n) " RESP
+if echo $RESP | grep -E '^[Yy]$' > /dev/null; then
+	echo
+	bash $(git rev-parse --show-toplevel)/automation/deploy_kubernetes.sh
+fi
+
+exit 0

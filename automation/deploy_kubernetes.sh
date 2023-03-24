@@ -1,6 +1,6 @@
 # Delete and recreate the key in case the service account has been updated.
 kubectl delete secret gcr-key --ignore-not-found
-kubectl create secret docker-registry gcr-key --docker-server=gcr.io --docker-username=_json_key --docker-password="$(cat ../service_acc_keys/eoscience-service-acc-key.json)"
+kubectl create secret docker-registry gcr-key --docker-server=gcr.io --docker-username=_json_key --docker-password="$(cat ../service_acc_keys/service-acc-key.json)"
 
 kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "gcr-key"}]}'
 

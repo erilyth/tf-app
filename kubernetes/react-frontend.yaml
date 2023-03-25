@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flask-server-deployment
+  name: react-frontend-deployment
   labels:
-    app: flask-server
+    app: react-frontend
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: flask-server
+      app: react-frontend
   template:
     metadata:
       labels:
-        app: flask-server
+        app: react-frontend
     spec:
       containers:
-      - name: flask-server-container
-        image: gcr.io/eoscience/flask-server:latest
+      - name: react-frontend-container
+        image: gcr.io/eoscience/react-frontend:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 5000
+        - containerPort: 8080
       # Add the secret created to the default service account as well: https://blog.container-solutions.com/using-google-container-registry-with-kubernetes
       # If this is not done, then fetching images from GCR will fail!
       imagePullSecrets:
@@ -28,11 +28,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: flask-server-service
+  name: react-frontend-service
   annotations:
     # Use an internal only service since our GCP project does not allow external IPs.
     # When the service has started, port forward the 8080 port from the local machine to the service by doing:
-    # kubectl port-forward service/flask-server-service 8080:8080
+    # kubectl port-forward service/react-frontend-service 8080:8080
     # This will allow us to access the service via 127.0.0.1:8080 on our local machine browser.
     # If we deploy an external load balancer then we won't have to do any of this and can directly access
     # the service with the <EXTERNAL_IP>:8080 of the service.
@@ -40,12 +40,10 @@ metadata:
     cloud.google.com/load-balancer-type: Internal
 spec:
   type: LoadBalancer
-  # The allowed IP range can be verfied by looking at "VPC network details" on GCP 
-  loadBalancerIP: 10.128.0.19
   selector:
-    app: flask-server
+    app: react-frontend
   ports:
     - protocol: TCP
       port: 8080
-      targetPort: 5000
+      targetPort: 8080
   

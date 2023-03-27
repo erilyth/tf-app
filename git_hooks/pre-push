@@ -17,7 +17,7 @@ done
 # Allow for user input.
 exec < /dev/tty
 
-read -p "Do you want to update the docker image and push it to GCR? (Y/n) " RESP
+read -p "Do you want to update all the docker images and push them to GCR? (Y/n) " RESP
 if echo $RESP | grep -E '^[Yy]$' > /dev/null; then
 	echo
 	bash $(git rev-parse --show-toplevel)/automation/build_and_upload_docker_images.sh

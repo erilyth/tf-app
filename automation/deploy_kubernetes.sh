@@ -24,6 +24,14 @@ if [ "$(kubectl get services | grep -c 'react-frontend-service')" -lt 1 ]; then
     kubectl create -f $(git rev-parse --show-toplevel)/kubernetes/react-frontend.yaml
 fi
 
+# This creates the MongoDB statefulset/services.
+if [[ "$(kubectl get statefulsets | grep -c 'mongodb-rs')" -lt 1 || "$(kubectl get services | grep -c 'mongodb-rs-service')" -lt 1 ]]; then
+    kubectl create -f $(git rev-parse --show-toplevel)/kubernetes/mongodb-rs.yaml
+    echo 'Please setup the MongoDB ReplicaSet by following the instructions in kubernetes/README.md'
+else
+    echo 'If you have made any changes to kubernetes/mongodb-rs.yaml, please stop the MongoDB StatefulSet and Service and rerun this script'
+fi
+
 kubectl get pods
 kubectl get services
 kubectl describe service flask-server-service

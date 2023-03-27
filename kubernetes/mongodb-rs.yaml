@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-rs-service
+  labels:
+    name: mongodb-rs-service
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  # Create a headless service that is required to access pods within the StatefulSet
+  clusterIP: None
+  selector:
+    app: mongodb-rs
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb-rs
+spec:
+  replicas: 2
+  serviceName: "mongodb-rs-service"
+  selector:
+    matchLabels:
+      app: mongodb-rs
+  template:
+    metadata:
+      labels:
+        app: mongodb-rs
+    spec:
+      containers:
+      - name: mongodb-rs
+        # Using an older version here since replicaset doesn't seem to work on kubernetes the latest version.
+        image: mongo:4.0.8
+        args: ["--dbpath", "/data/db"]
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongodb-rs-data
+          mountPath: /data/db
+        # Once the pods are up, run the set of commands mentioned in README.md to initiate the MongoDB ReplicaSet.
+        command:
+          - mongod
+          - "--bind_ip_all"
+          - "--replSet"
+          - rs0
+  volumeClaimTemplates:
+  - metadata:
+      name: mongodb-rs-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 2Gi

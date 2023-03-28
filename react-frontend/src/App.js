@@ -1,8 +1,8 @@
+import ImageInputForm from "./components/ImageInputForm";
+
 function App() {
   return (
-    <>
-      Hello world from react!
-    </>
+    <ImageInputForm />
   );
 }
 

@@ -4,6 +4,7 @@ import axios from 'axios';
 export default function ImageInputForm() {
 
     const [imageFile, setImageFile] = useState(null);
+    const [prediction, setPrediction] = useState(null);
 
     function handleFileSelect(event) {
         setImageFile(event.target.files[0]);
@@ -13,21 +14,30 @@ export default function ImageInputForm() {
         event.preventDefault();
         const formData = new FormData();
         formData.append('image', imageFile);
+        
+        axios.post('http://localhost:5000/predict', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+          })
+        .then(response => {
+            setPrediction('data:;base64,' + response.data['image'])
+        })
+        .catch(error => {
+            console.log(error);
+        });
     }
 
-    axios.get('http://flask-server-service:8080')
-    .then(response => {
-        console.log(response.data);
-    })
-    .catch(error => {
-        console.log(error);
-    });
-
     return (
-        <form onSubmit={handleSubmit}>
-            <label htmlFor="image">Select an image:</label>
-            <input type="file" id="image" onChange={handleFileSelect} />
-            <button type="submit">Upload</button>
-        </form>
+        <div>
+            <form onSubmit={handleSubmit}>
+                <label htmlFor="image">Select an image:</label>
+                <input type="file" id="image" onChange={handleFileSelect} />
+                <button type="submit">Upload</button>
+            </form>
+            {prediction && (
+                <img src={prediction} alt="Prediction" />
+            )}
+        </div>
         );
 }

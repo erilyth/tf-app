@@ -21,7 +21,7 @@ export default function ImageInputForm() {
             }
           })
         .then(response => {
-            setPrediction('data:;base64,' + response.data['image'])
+            setPrediction('data:;base64,' + response.data['predictions'])
         })
         .catch(error => {
             console.log(error);
@@ -37,6 +37,9 @@ export default function ImageInputForm() {
             </form>
             {prediction && (
                 <img src={prediction} alt="Prediction" />
+            )}
+            {imageFile && (
+                <img src={URL.createObjectURL(imageFile)} alt="Input" />
             )}
         </div>
         );

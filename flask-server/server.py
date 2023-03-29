@@ -5,6 +5,7 @@ from base64 import b64encode
 
 from PIL import Image
 import numpy as np
+from tf_inference import TFInference
 
 from pymongo import MongoClient
 
@@ -17,6 +18,9 @@ db = mongo_client["test"]
 
 MIME_TYPE_TO_PIL_TYPE = {'image/png': 'PNG', 'image/jpeg': 'JPEG'}
 
+# Initialize the TFInference module.
+tf_inference_module = TFInference()
+
 # Route the index page
 @app.route('/')
 def index():
@@ -25,18 +29,18 @@ def index():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    input_image = request.files['image']
-    pil_img = Image.open(input_image)
-    img_arr = np.asarray(pil_img)
+    request_img = request.files['image']
+    input_img = Image.open(request_img)
 
-    # Process image file here
-    print(img_arr)
+    # Run the TF model on the input image.
+    preds_img = tf_inference_module.predict(input_img)
 
-    # Return processed image as response
+    # Base64 encode the image before sending it as a response.
     output = BytesIO()
-    pil_img.save(output, format=MIME_TYPE_TO_PIL_TYPE[input_image.mimetype])
+    preds_img.save(output, format=MIME_TYPE_TO_PIL_TYPE[request_img.mimetype])
     img_b64 = b64encode(output.getvalue()).decode("utf-8")
-    return jsonify({'status': True, 'image': img_b64})
+
+    return jsonify({'status': True, 'predictions': img_b64})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

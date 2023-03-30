@@ -38,6 +38,5 @@ kubectl describe service flask-server-service
 kubectl describe service react-frontend-service
 
 # Manually run port forwarding to access either of [flask-server-service, react-frontend-service]
-# through a browser since our service uses an internal only load balancer. We use 8080 as the
-# target port since all of our services are configured to run on 8080.
-# kubectl port-forward service/<SERVICE_NAME> 8080:8080
+# through a browser since our service uses an internal only load balancer.
+# kubectl port-forward service/<SERVICE_NAME> <TARGET_PORT>:<SERVICE_PORT>

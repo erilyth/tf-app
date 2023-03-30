@@ -18,5 +18,5 @@ RUN npm install -g http-server
 
 COPY --from=build-stage /react-frontend/build .
 
-EXPOSE 8080
-CMD ["http-server", "-p", "8080", "-a", "0.0.0.0"]
+EXPOSE 3000
+CMD ["http-server", "-p", "3000", "-a", "0.0.0.0"]

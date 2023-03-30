@@ -19,7 +19,7 @@ spec:
         image: gcr.io/eoscience/react-frontend:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 8080
+        - containerPort: 3000
       # Add the secret created to the default service account as well: https://blog.container-solutions.com/using-google-container-registry-with-kubernetes
       # If this is not done, then fetching images from GCR will fail!
       imagePullSecrets:
@@ -44,6 +44,6 @@ spec:
     app: react-frontend
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
+      port: 3000
+      targetPort: 3000
   

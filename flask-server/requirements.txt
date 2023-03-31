@@ -5,3 +5,4 @@ flask>=2.2.2
 flask-cors
 pymongo
 pillow
+redis

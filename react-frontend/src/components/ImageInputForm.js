@@ -37,6 +37,7 @@ export default function ImageInputForm({ setInputImage, setOutputImage}) {
           })
         .then(response => {
             setOutputImage('data:;base64,' + response.data['predictions'])
+            console.log(response);
         })
         .catch(error => {
             console.log(error);

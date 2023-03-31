@@ -8,7 +8,9 @@
 - Install npm on your machine
 - Install Docker on your machine
 - Install Kubernetes (kubectl) on your machine
+- Setup a Google Cloud Kubernetes cluster.
 - Connect Kubernetes to a GCP Kubernetes cluster by running `gcloud container clusters get-credentials CLUSTER_NAME --region=COMPUTE_REGION`
+- Setup a Google Cloud Redis MemoryStore instance.
 
 ### Usage
 
@@ -20,4 +22,4 @@
 
 - Add some colored text to make it easier to know whats going on when the automation scripts are run
 - Support authentication/authorization
-- Add in a cache to the system
+- Add in a server side as well as a client side cache.

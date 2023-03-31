@@ -1,19 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-// Setup axios interceptors that log the time taken for a request under "responseTime"
-// in all the requests sent via axios.
-axios.interceptors.request.use( x => {
-    x.meta = x.meta || {}
-    x.meta.requestStartedAt = new Date().getTime();
-    return x;
-})
-
-axios.interceptors.response.use( x => {
-    x.responseTime = new Date().getTime() - x.config.meta.requestStartedAt;
-    return x;
-})
-
 export default function ImageInputForm({ setInputImage, setOutputImage}) {
 
     const [inputFile, setInputFile] = useState(null);

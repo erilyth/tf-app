@@ -36,11 +36,13 @@ export default function ImageInputForm({ setInputImage, setOutputImage}) {
         axios.post('http://localhost:5000/predict', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${access_token}`
+                'Authorization': access_token ? `Bearer ${access_token}` : ''
             }
           })
         .then(response => {
-            setOutputImage('data:;base64,' + response.data['predictions'])
+            if ('predictions' in response.data) {
+                setOutputImage('data:;base64,' + response.data['predictions'])
+            }
             console.log(response);
         })
         .catch(error => {

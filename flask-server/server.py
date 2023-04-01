@@ -77,7 +77,7 @@ def add_to_cache(api_route, id, value):
 # is either absent or invalid.
 @jwt.invalid_token_loader
 def invalid_token_callback(error):
-    return jsonify({"message": 'Invalid token: {}'.format(str(error))}), 401
+    return jsonify({"message": 'Invalid token!'}), 401
 
 # Setup a custom error message that is displayed when a token passed in the headers
 # has expired.
@@ -99,6 +99,9 @@ def index():
 def predict():
     # Get the current user from the JSON Web Token.
     current_user = get_jwt_identity()
+
+    if 'image' not in request.files:
+        return jsonify({'status': False, 'username': current_user, 'message': 'image not present in the request'})
 
     request_img = request.files['image']
     input_img = Image.open(request_img)

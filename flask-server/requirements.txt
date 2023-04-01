@@ -3,6 +3,8 @@ numpy
 pytype
 flask>=2.2.2
 flask-cors
+flask-jwt-extended>=4.0.0
+pyjwt
 pymongo
 pillow
 redis

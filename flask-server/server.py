@@ -1,5 +1,9 @@
-from flask import Flask, request, send_file, Response, jsonify
+from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager, get_jwt_identity, jwt_required
+import jwt
+
+from services.users import users_service
 
 from io import BytesIO
 from base64 import b64encode
@@ -14,8 +18,13 @@ import pymongo
 import redis
 
 app = Flask(__name__)
+app.register_blueprint(users_service)
 # Allow access from any origin for any of the routes by default.
 cors = CORS(app)
+
+# Setup JSON Web Tokens
+app.config['JWT_SECRET_KEY'] = 'cebbfc54440208cbe8b35466bc5263db'
+jwt = JWTManager(app)
 
 # Connect to the MongoDB service running in Kubernetes if the 
 # flask-server is running in the Kubernetes cluster on GCP. Else,
@@ -64,6 +73,18 @@ def add_to_cache(api_route, id, value):
     redis_client.setex(redis_key, 300, value)
     return True
 
+# Setup a custom error message that is displayed when a token passed in the headers
+# is either absent or invalid.
+@jwt.invalid_token_loader
+def invalid_token_callback(error):
+    return jsonify({"message": 'Invalid token: {}'.format(str(error))}), 401
+
+# Setup a custom error message that is displayed when a token passed in the headers
+# has expired.
+@jwt.expired_token_loader
+def my_expired_token_callback(header, payload):
+    return jsonify({"message": 'Token has expired!'}), 401
+
 # Route the index page
 @app.route('/')
 def index():
@@ -74,7 +95,11 @@ def index():
     return 'Hello! ' + elements_from_db
 
 @app.route('/predict', methods=['POST'])
+@jwt_required()
 def predict():
+    # Get the current user from the JSON Web Token.
+    current_user = get_jwt_identity()
+
     request_img = request.files['image']
     input_img = Image.open(request_img)
 
@@ -88,7 +113,7 @@ def predict():
     # the cache directly.
     preds_from_cache = get_from_cache('predict', md5_input_img)
     if preds_from_cache:
-        return jsonify({'status': True, 'cacheHit': True, 'predictions': preds_from_cache})
+        return jsonify({'status': True, 'cacheHit': True, 'username': current_user, 'predictions': preds_from_cache})
 
     # Run the TF model on the input image.
     preds_img = tf_inference_module.predict(input_img)
@@ -101,7 +126,7 @@ def predict():
     # Add input image and predictions to the cache.
     add_to_cache('predict', md5_input_img, preds_img_b64)
 
-    return jsonify({'status': True, 'cacheHit': False, 'predictions': preds_img_b64})
+    return jsonify({'status': True, 'cacheHit': False, 'username': current_user, 'predictions': preds_img_b64})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

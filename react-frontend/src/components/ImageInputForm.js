@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 export default function ImageInputForm({ setInputImage, setOutputImage}) {
 
@@ -30,9 +31,12 @@ export default function ImageInputForm({ setInputImage, setOutputImage}) {
         const formData = new FormData();
         formData.append('image', inputFile);
         
+        const access_token = Cookies.get('access_token');
+
         axios.post('http://localhost:5000/predict', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${access_token}`
             }
           })
         .then(response => {

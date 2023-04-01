@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+
 import ImageDisplay from './components/ImageDisplay';
 import ImageInputForm from "./components/ImageInputForm";
+import Login from './components/Login';
+
 import axios from 'axios';
 
 // Setup axios interceptors that log the time taken for a request under "responseTime"
@@ -23,6 +26,7 @@ function App() {
 
   return (
     <div>
+      <Login />
       <ImageInputForm setInputImage={setInputImage} setOutputImage={setOutputImage} />  
       <ImageDisplay inputImage={inputImage} outputImage={outputImage} />
     </div>

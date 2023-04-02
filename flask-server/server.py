@@ -29,7 +29,7 @@ jwt = JWTManager(app)
 # Connect to the MongoDB service running in Kubernetes if the 
 # flask-server is running in the Kubernetes cluster on GCP. Else,
 # when run locally, mongo_client is just set to None.
-mongo_client = pymongo.MongoClient("mongodb://mongodb-rs-service:27017/", serverSelectionTimeoutMS=5)
+mongo_client = pymongo.MongoClient("mongodb://mongodb-rs-service:27017/")
 try:
     mongo_client.server_info()
 except pymongo.errors.ServerSelectionTimeoutError:
